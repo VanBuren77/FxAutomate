@@ -54,7 +54,7 @@ namespace FxAutomate
             var splitFormula = templateReferenceRange.Split(new string[] { "!B" }, StringSplitOptions.None);
             var searchText = splitFormula[splitFormula.Length - 1];
 
-            var updateRow = targetWorksheet.Range[targetRow.ToString() + ":" + targetRow.ToString()];
+            var updateRow = targetWorksheet.Range["B:" + targetRow.ToString() + ":ZZ" + targetRow.ToString()];
             updateRow.Replace(What: searchText,
                                 Replacement: referenceRow,
                                 LookAt: Excel.XlLookAt.xlPart,
@@ -68,6 +68,7 @@ namespace FxAutomate
             var sourceMaxDate = (string)sourceWorksheet.Range["A" + sourceMaxRowCount.ToString()].Value;
             int offset = sourceMaxRowCount - referenceRow;
 
+            // var fillDownRange = targetWorksheet.Range[targetRow.ToString() + ":" + (targetRow + offset).ToString()];
             var fillDownRange = targetWorksheet.Range[targetRow.ToString() + ":" + (targetRow + offset).ToString()];
             fillDownRange.FillDown();
 
@@ -98,6 +99,8 @@ namespace FxAutomate
 
         static void Main(string[] args)
         {
+            // CopyDays();
+            // CopyDays(asOfDate: "2023-02-25");
             CopyDays();
         }
     }
