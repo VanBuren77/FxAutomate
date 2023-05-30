@@ -31,13 +31,13 @@ namespace FxAutomate
 
         public static void FillDownUpToDate(Worksheet worksheet, DateTime targetAsOfDate, string dateCol = "A")
         {
-            var maxRow = worksheet.UsedRange.Rows.Count;
-            var startRange = worksheet.Range[dateCol + maxRow.ToString()];
+            var maxRow = worksheet.UsedRange.Rows.Count - 1;
+            var startRange = worksheet.Range[dateCol + (maxRow).ToString()];
 
             try
             {
                 var maxRangeAsOfDate = Convert.ToDateTime(startRange.Value);
-                var increment = maxRangeAsOfDate - targetAsOfDate;
+                var increment = (targetAsOfDate - maxRangeAsOfDate).Days;
 
                 if (maxRangeAsOfDate < targetAsOfDate)
                 {

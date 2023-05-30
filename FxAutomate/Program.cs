@@ -9,6 +9,7 @@ using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.Excel;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace FxAutomate
 {
@@ -26,7 +27,9 @@ namespace FxAutomate
             var targetSearchDate = DateTime.ParseExact(asOfDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("d-MMM-yy");
 
             var excelApp = new Excel.Application();
-            excelApp.Visible = true;
+            excelApp.Visible = false;
+            excelApp.DisplayAlerts = false;
+            excelApp.EnableSound = false;
 
             string dir = @"C:\Users\evanl\source\repos\j4j\Sheets";
             string sourceFile = @"fx.xlsx";
@@ -76,18 +79,20 @@ namespace FxAutomate
 
             var sourceMaxDateDt = Convert.ToDateTime(sourceMaxDate);
             // Daily New - >
-            Utils.FillDownUpToDate(targetWorkbook.Sheets["WeeklyData"], sourceMaxDateDt);
-
-            // Weekly Data - >
-            Utils.FillDownUpToDate(targetWorkbook.Sheets["DailyNew"], sourceMaxDateDt);
+            var weeklyDataSheet = (Worksheet)targetWorkbook.Sheets["WeeklyData"];
+            var dailyNewSheet = (Worksheet)targetWorkbook.Sheets["DailyNew"];
+            var monthlyDataSheet = (Worksheet)targetWorkbook.Sheets["MonthlyData"];
             
-            // Monthly Data
-            Utils.FillDownUpToDate(targetWorkbook.Sheets["MonthlyData"], sourceMaxDateDt);
+            Utils.FillDownUpToDate(weeklyDataSheet, sourceMaxDateDt);
+            Utils.FillDownUpToDate(dailyNewSheet, sourceMaxDateDt);
+            Utils.FillDownUpToDate(monthlyDataSheet, sourceMaxDateDt);
 
 
             // Save it and close.
-            targetWorkbook.SaveAs(targetWorkbook.FullName.Replace(".xlsm", "_modified.xlsm"));
+            targetWorkbook.SaveAs(dir + "\\" + targetFile.Replace(".xlsm", "_modified.xlsm"));
             targetWorkbook.Close();
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
         }
 
 
