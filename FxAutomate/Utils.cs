@@ -29,11 +29,27 @@ namespace FxAutomate
             return filePath;
         }
 
-        public static void fillDownUpToDate(Worksheet worksheet, string asOfDate)
+        public static void FillDownUpToDate(Worksheet worksheet, DateTime targetAsOfDate, string dateCol = "A")
         {
             var maxRow = worksheet.UsedRange.Rows.Count;
-            var maxRange = worksheet.Range["A" + maxRow.ToString()].Value;
-            fillDownRange.FillDown();
+            var startRange = worksheet.Range[dateCol + maxRow.ToString()];
+
+            try
+            {
+                var maxRangeAsOfDate = Convert.ToDateTime(startRange.Value);
+                var increment = maxRangeAsOfDate - targetAsOfDate;
+
+                if (maxRangeAsOfDate < targetAsOfDate)
+                {
+                    var fillDownRange = worksheet.Range[(maxRow).ToString() + ":" + (maxRow + increment).ToString()];
+                    fillDownRange.FillDown();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Failed to convert / fill down.");
+                return;
+            }
         }
 
 

@@ -69,27 +69,25 @@ namespace FxAutomate
             fillDownRange.FillDown();
 
             sourceWorkbook.Close();
-            Console.WriteLine("Man this looks so interesting.");
 
             // ============================
             // Fill Downs ->
             // ============================
 
+            var sourceMaxDateDt = Convert.ToDateTime(sourceMaxDate);
             // Daily New - >
-            Utils.fillDownUpToDate(targetWorkbook.Sheets["WeeklyData"], sourceMaxDate);
+            Utils.FillDownUpToDate(targetWorkbook.Sheets["WeeklyData"], sourceMaxDateDt);
 
-            // Weekly New - >
-            //var weeklyNew = targetWorkbook.Sheets["WeeklyData"];
-            //maxRow = weeklyNew.UsedRange.Rows.Count;
-            //var weeklyDataDataFillDown = weeklyNew.Range[maxRow.ToString() + ":" + (maxRow + 1).ToString()];
-            //weeklyDataDataFillDown.FillDown();
+            // Weekly Data - >
+            Utils.FillDownUpToDate(targetWorkbook.Sheets["DailyNew"], sourceMaxDateDt);
+            
+            // Monthly Data
+            Utils.FillDownUpToDate(targetWorkbook.Sheets["MonthlyData"], sourceMaxDateDt);
 
-            //// Weekly Data - >
-            //var weeklyData = targetWorkbook.Sheets["WeeklyData"];
-            //maxRow = weeklyData.UsedRange.Rows.Count;
-            //var weeklyDataDataFillDown = weeklyData.Range[maxRow.ToString() + ":" + (maxRow + 1).ToString()];
-            //weeklyDataDataFillDown.FillDown();
 
+            // Save it and close.
+            targetWorkbook.SaveAs(targetWorkbook.FullName.Replace(".xlsm", "_modified.xlsm"));
+            targetWorkbook.Close();
         }
 
 
